@@ -95,7 +95,7 @@ export default function DashboardPage() {
           {/* Skills grid */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Active Skills</h2>
+              <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Skills</h2>
               <Link href="/editor" className="text-xs text-brand-400 hover:text-brand-300 transition-colors">
                 View All
               </Link>
