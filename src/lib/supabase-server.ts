@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-export function createClient() {
+export function createServerSupabase() {
   const cookieStore = cookies();
 
   return createServerClient(
@@ -16,14 +16,14 @@ export function createClient() {
           try {
             cookieStore.set({ name, value, ...options });
           } catch (error) {
-            // ignore in server components
+            // Server component — ignore
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options });
           } catch (error) {
-            // ignore in server components
+            // Server component — ignore
           }
         },
       },
