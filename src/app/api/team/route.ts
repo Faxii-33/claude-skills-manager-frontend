@@ -99,14 +99,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (createError) {
-    return NextResponse.json({
-      error: createError.message,
-      debug: {
-        urlPrefix: supabaseUrl.substring(0, 30),
-        keyPrefix: serviceRole.substring(0, 20),
-        keyLength: serviceRole.length,
-      }
-    }, { status: 400 });
+    return NextResponse.json({ error: createError.message }, { status: 400 });
   }
 
   // Create profile for the new user
