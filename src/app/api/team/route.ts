@@ -85,10 +85,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Server misconfigured: missing service role key' }, { status: 500 });
   }
 
-  const adminClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    serviceRole,
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) {
+    return NextResponse.json({ error: 'Server misconfigured: missing Supabase URL' }, { status: 500 });
+  }
+
+  const adminClient = createClient(supabaseUrl, serviceRole);
 
   const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
     email,
