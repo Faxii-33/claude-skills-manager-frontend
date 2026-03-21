@@ -1,100 +1,97 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, PenTool, Users, Settings, Plus, LogOut } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { LayoutDashboard, Pencil, Users, Settings, Plus, LogOut, Zap } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
-import { Profile } from '@/lib/types';
-
-interface SidebarProps {
-  profile: Profile | null;
-}
+import { useRouter } from 'next/navigation';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/editor', label: 'Editor', icon: PenTool },
+  { href: '/editor', label: 'Editor', icon: Pencil },
   { href: '/team', label: 'Team', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export default function Sidebar({ profile }: SidebarProps) {
+interface SidebarProps {
+  userRole: 'admin' | 'user';
+  displayName: string;
+}
+
+export default function Sidebar({ userRole, displayName }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
 
   const handleLogout = async () => {
+    const supabase = createClient();
     await supabase.auth.signOut();
     router.push('/login');
   };
 
+  const filteredNav = navItems.filter((item) => {
+    if (item.href === '/team' && userRole !== 'admin') return false;
+    return true;
+  });
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[220px] bg-surface-800 border-r border-border flex flex-col z-50">
-      {/* Logo */}
-      <div className="px-5 py-6 border-b border-border">
+    <aside className="fixed left-0 top-0 h-screen w-[220px] bg-surface-900 border-r border-surface-700/50 flex flex-col z-50">
+      <div className="p-5 pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center">
-            <span className="text-white font-bold text-sm">SK</span>
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+            <Zap size={16} className="text-white" />
           </div>
           <div>
-            <div className="text-sm font-semibold text-text-primary leading-tight">Skills Manager</div>
-            <div className="text-[10px] text-text-muted uppercase tracking-wider">Team Workspace</div>
+            <div className="text-sm font-semibold text-slate-100 tracking-tight">Skills Manager</div>
+            <div className="text-[10px] text-slate-500 uppercase tracking-widest">Team Workspace</div>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
+      <nav className="flex-1 px-3 pt-4 space-y-0.5">
+        {filteredNav.map((item) => {
           const isActive = pathname.startsWith(item.href);
-          const isAdminOnly = item.href === '/team';
-
-          if (isAdminOnly && profile?.role !== 'admin') return null;
-
+          const Icon = item.icon;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                 isActive
-                  ? 'bg-accent-blue/15 text-accent-blue font-medium'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-700'
+                  ? 'bg-brand-600/20 text-brand-400 border border-brand-500/20'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-surface-800'
               }`}
             >
-              <item.icon size={18} strokeWidth={isActive ? 2 : 1.5} />
+              <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
               {item.label}
             </Link>
           );
         })}
       </nav>
 
-      {/* New Skill Button */}
-      <div className="px-3 pb-3">
+      <div className="px-3 pb-2">
         <Link
-          href="/editor?new=true"
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-accent-blue text-white text-sm font-medium hover:bg-accent-blue/90 transition-colors"
+          href="/editor/new"
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition-colors"
         >
           <Plus size={16} />
           New Skill
         </Link>
       </div>
 
-      {/* User */}
-      <div className="px-3 pb-4 border-t border-border pt-3">
+      <div className="p-3 border-t border-surface-700/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-surface-500 flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-medium text-text-secondary">
-                {profile?.display_name?.charAt(0).toUpperCase() || '?'}
-              </span>
+            <div className="w-8 h-8 rounded-full bg-surface-700 flex items-center justify-center text-xs font-semibold text-slate-300 shrink-0">
+              {displayName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <div className="text-sm text-text-primary truncate">{profile?.display_name || 'User'}</div>
-              <div className="text-[10px] text-text-muted capitalize">{profile?.role || 'user'}</div>
+              <div className="text-sm text-slate-200 font-medium truncate">{displayName}</div>
+              <div className="text-[10px] text-slate-500 uppercase tracking-wider">{userRole}</div>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="p-1.5 text-text-muted hover:text-text-primary transition-colors"
+            className="p-1.5 rounded-md text-slate-500 hover:text-slate-300 hover:bg-surface-800 transition-colors"
             title="Log out"
           >
             <LogOut size={14} />
