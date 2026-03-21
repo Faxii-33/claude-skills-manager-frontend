@@ -14,6 +14,7 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserName, setNewUserName] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState<'user' | 'admin'>('user');
   const [addingUser, setAddingUser] = useState(false);
   const [addUserMsg, setAddUserMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -71,7 +72,7 @@ export default function SettingsPage() {
   };
 
   const handleAddUser = async () => {
-    if (!newUserEmail || !newUserName) return;
+    if (!newUserEmail || !newUserName || !newUserPassword) return;
     setAddingUser(true);
     setAddUserMsg(null);
 
@@ -79,7 +80,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/team', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newUserEmail, displayName: newUserName, role: newUserRole }),
+        body: JSON.stringify({ email: newUserEmail, displayName: newUserName, password: newUserPassword, role: newUserRole }),
       });
       const data = await res.json();
 
@@ -89,6 +90,7 @@ export default function SettingsPage() {
         setAddUserMsg({ type: 'success', text: `User ${newUserEmail} added successfully` });
         setNewUserEmail('');
         setNewUserName('');
+        setNewUserPassword('');
         setNewUserRole('user');
       }
     } catch {
@@ -214,7 +216,7 @@ export default function SettingsPage() {
             <h3 className="text-sm font-semibold text-slate-300">Add User</h3>
           </div>
           <p className="text-xs text-slate-500 mb-4">
-            Create a new user account. They can sign in with the email and password you set in Supabase.
+            Create a new user account. They can sign in immediately with the email and password you set here.
           </p>
 
           <div className="space-y-3">
@@ -236,6 +238,17 @@ export default function SettingsPage() {
                 value={newUserName}
                 onChange={(e) => setNewUserName(e.target.value)}
                 placeholder="John Doe"
+                className="w-full px-3 py-2.5 bg-surface-800 border border-surface-700 rounded-lg text-white text-sm placeholder-slate-600 focus:outline-none focus:border-brand-500/50 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-500 mb-1.5">Password</label>
+              <input
+                type="password"
+                value={newUserPassword}
+                onChange={(e) => setNewUserPassword(e.target.value)}
+                placeholder="Min 6 characters"
                 className="w-full px-3 py-2.5 bg-surface-800 border border-surface-700 rounded-lg text-white text-sm placeholder-slate-600 focus:outline-none focus:border-brand-500/50 transition-colors"
               />
             </div>
@@ -264,7 +277,7 @@ export default function SettingsPage() {
 
             <button
               onClick={handleAddUser}
-              disabled={addingUser || !newUserEmail || !newUserName}
+              disabled={addingUser || !newUserEmail || !newUserName || !newUserPassword}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 disabled:opacity-30 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
             >
               {addingUser ? (

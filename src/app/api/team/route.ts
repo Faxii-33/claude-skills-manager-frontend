@@ -1,4 +1,5 @@
 import { createServerSupabase } from '@/lib/supabase-server';
+import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/team — list all team members
@@ -68,21 +69,42 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { email, displayName, role } = body;
+  const { email, displayName, password, role } = body;
 
-  if (!email || !displayName) {
-    return NextResponse.json({ error: 'email and displayName are required' }, { status: 400 });
+  if (!email || !displayName || !password) {
+    return NextResponse.json({ error: 'email, displayName, and password are required' }, { status: 400 });
   }
 
-  // Note: Creating users via client-side Supabase requires the service_role key.
-  // For MVP, admin creates users manually in Supabase dashboard,
-  // or we use Supabase's invite function.
-  // This endpoint just pre-creates the profile so when the user logs in, their role is set.
+  if (password.length < 6) {
+    return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
+  }
 
-  const { data, error } = await supabase
+  // Use service role client to create auth user
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceRole) {
+    return NextResponse.json({ error: 'Server misconfigured: missing service role key' }, { status: 500 });
+  }
+
+  const adminClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    serviceRole,
+  );
+
+  const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
+
+  if (createError) {
+    return NextResponse.json({ error: createError.message }, { status: 400 });
+  }
+
+  // Create profile for the new user
+  const { data, error } = await adminClient
     .from('profiles')
     .upsert({
-      id: crypto.randomUUID(), // placeholder — will be replaced on first login
+      id: newUser.user.id,
       email,
       display_name: displayName,
       role: role || 'user',
