@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase-browser';
-import { Save, Loader2, Copy, Check } from 'lucide-react';
+import { Save, Loader2, Copy, Check, UserPlus } from 'lucide-react';
 import type { Profile } from '@/lib/types';
 
 export default function SettingsPage() {
@@ -12,6 +12,11 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserRole, setNewUserRole] = useState<'user' | 'admin'>('user');
+  const [addingUser, setAddingUser] = useState(false);
+  const [addUserMsg, setAddUserMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const mcpUrl = process.env.NEXT_PUBLIC_MCP_SERVER_URL
     ? `${process.env.NEXT_PUBLIC_MCP_SERVER_URL}/mcp`
@@ -65,6 +70,33 @@ export default function SettingsPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleAddUser = async () => {
+    if (!newUserEmail || !newUserName) return;
+    setAddingUser(true);
+    setAddUserMsg(null);
+
+    try {
+      const res = await fetch('/api/team', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newUserEmail, displayName: newUserName, role: newUserRole }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAddUserMsg({ type: 'error', text: data.error || 'Failed to add user' });
+      } else {
+        setAddUserMsg({ type: 'success', text: `User ${newUserEmail} added successfully` });
+        setNewUserEmail('');
+        setNewUserName('');
+        setNewUserRole('user');
+      }
+    } catch {
+      setAddUserMsg({ type: 'error', text: 'Network error' });
+    }
+    setAddingUser(false);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -91,7 +123,7 @@ export default function SettingsPage() {
               type="text"
               value={profile?.email || ''}
               disabled
-              className="w-full px-3 py-2.5 bg-surface-850 border border-surface-700 rounded-lg text-slate-400 text-sm cursor-not-allowed"
+              className="w-full px-3 py-2.5 bg-surface-800 border border-surface-700 rounded-lg text-slate-400 text-sm cursor-not-allowed"
             />
           </div>
 
@@ -101,7 +133,7 @@ export default function SettingsPage() {
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full px-3 py-2.5 bg-surface-850 border border-surface-700 rounded-lg text-white text-sm focus:outline-none focus:border-brand-500/50 transition-colors"
+              className="w-full px-3 py-2.5 bg-surface-800 border border-surface-700 rounded-lg text-white text-sm focus:outline-none focus:border-brand-500/50 transition-colors"
             />
           </div>
 
@@ -173,6 +205,78 @@ export default function SettingsPage() {
           <p><span className="text-slate-400 font-medium">3.</span> Restart Claude Desktop</p>
         </div>
       </div>
+
+      {/* Add User section (admin only) */}
+      {profile?.role === 'admin' && (
+        <div className="bg-surface-900 border border-surface-700/50 rounded-xl p-6 mb-6">
+          <div className="flex items-center gap-2 mb-2">
+            <UserPlus size={16} className="text-slate-300" />
+            <h3 className="text-sm font-semibold text-slate-300">Add User</h3>
+          </div>
+          <p className="text-xs text-slate-500 mb-4">
+            Create a new user account. They can sign in with the email and password you set in Supabase.
+          </p>
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs text-slate-500 mb-1.5">Email</label>
+              <input
+                type="email"
+                value={newUserEmail}
+                onChange={(e) => setNewUserEmail(e.target.value)}
+                placeholder="user@company.com"
+                className="w-full px-3 py-2.5 bg-surface-800 border border-surface-700 rounded-lg text-white text-sm placeholder-slate-600 focus:outline-none focus:border-brand-500/50 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-500 mb-1.5">Display Name</label>
+              <input
+                type="text"
+                value={newUserName}
+                onChange={(e) => setNewUserName(e.target.value)}
+                placeholder="John Doe"
+                className="w-full px-3 py-2.5 bg-surface-800 border border-surface-700 rounded-lg text-white text-sm placeholder-slate-600 focus:outline-none focus:border-brand-500/50 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs text-slate-500 mb-1.5">Role</label>
+              <select
+                value={newUserRole}
+                onChange={(e) => setNewUserRole(e.target.value as 'user' | 'admin')}
+                className="w-full px-3 py-2.5 bg-surface-800 border border-surface-700 rounded-lg text-white text-sm focus:outline-none focus:border-brand-500/50 transition-colors"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {addUserMsg && (
+              <div className={`text-sm px-4 py-2.5 rounded-lg border ${
+                addUserMsg.type === 'success'
+                  ? 'text-accent-green bg-accent-green/10 border-accent-green/20'
+                  : 'text-accent-red bg-accent-red/10 border-accent-red/20'
+              }`}>
+                {addUserMsg.text}
+              </div>
+            )}
+
+            <button
+              onClick={handleAddUser}
+              disabled={addingUser || !newUserEmail || !newUserName}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 disabled:opacity-30 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
+            >
+              {addingUser ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <UserPlus size={14} />
+              )}
+              Add User
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Danger zone */}
       <div className="bg-surface-900 border border-accent-red/20 rounded-xl p-6">
