@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --surface-900: #0a0e17;
+  --surface-800: #0f1520;
+  --surface-700: #151c2b;
+  --surface-600: #1a2235;
+  --surface-500: #212b40;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-green: #10b981;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+}
+
+body {
+  background-color: var(--surface-900);
+  color: var(--text-primary);
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-800);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-500);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-600);
+}
+
+/* Markdown preview styling */
+.markdown-preview h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
+.markdown-preview h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--accent-cyan); }
+.markdown-preview h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+.markdown-preview p { margin-bottom: 0.75rem; color: var(--text-secondary); line-height: 1.7; }
+.markdown-preview ul, .markdown-preview ol { margin-bottom: 0.75rem; padding-left: 1.5rem; color: var(--text-secondary); }
+.markdown-preview li { margin-bottom: 0.25rem; }
+.markdown-preview code {
+  background: var(--surface-600);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+}
+.markdown-preview pre {
+  background: var(--surface-800);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
+}
+.markdown-preview pre code {
+  background: none;
+  padding: 0;
+}
+.markdown-preview strong { color: var(--text-primary); }

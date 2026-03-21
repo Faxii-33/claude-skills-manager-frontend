@@ -1,0 +1,197 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase-browser';
+import { Save, Loader2, Copy, Check } from 'lucide-react';
+import type { Profile } from '@/lib/types';
+
+export default function SettingsPage() {
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [displayName, setDisplayName] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const mcpUrl = process.env.NEXT_PUBLIC_MCP_SERVER_URL
+    ? `${process.env.NEXT_PUBLIC_MCP_SERVER_URL}/mcp`
+    : 'https://claude-skills-manager-production.up.railway.app/mcp';
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (data) {
+        setProfile(data as Profile);
+        setDisplayName(data.display_name);
+      }
+      setLoading(false);
+    };
+    fetchProfile();
+  }, []);
+
+  const handleSave = async () => {
+    if (!profile) return;
+    setSaving(true);
+    const supabase = createClient();
+    await supabase
+      .from('profiles')
+      .update({ display_name: displayName })
+      .eq('id', profile.id);
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleCopy = () => {
+    const config = JSON.stringify({
+      mcpServers: {
+        'team-skills': {
+          type: 'streamablehttp',
+          url: mcpUrl,
+        },
+      },
+    }, null, 2);
+    navigator.clipboard.writeText(config);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <div className="mb-8">
+        <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">Workspace · Settings</p>
+        <h1 className="text-2xl font-bold text-white tracking-tight">Settings</h1>
+      </div>
+
+      {/* Profile section */}
+      <div className="bg-surface-900 border border-surface-700/50 rounded-xl p-6 mb-6">
+        <h3 className="text-sm font-semibold text-slate-300 mb-5">Profile</h3>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs text-slate-500 mb-1.5">Email</label>
+            <input
+              type="text"
+              value={profile?.email || ''}
+              disabled
+              className="w-full px-3 py-2.5 bg-surface-850 border border-surface-700 rounded-lg text-slate-400 text-sm cursor-not-allowed"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-slate-500 mb-1.5">Display Name</label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              className="w-full px-3 py-2.5 bg-surface-850 border border-surface-700 rounded-lg text-white text-sm focus:outline-none focus:border-brand-500/50 transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-slate-500 mb-1.5">Role</label>
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider ${
+                  profile?.role === 'admin'
+                    ? 'bg-accent-amber/10 text-accent-amber border border-accent-amber/20'
+                    : 'bg-brand-500/10 text-brand-400 border border-brand-500/20'
+                }`}
+              >
+                {profile?.role}
+              </span>
+              {profile?.role === 'user' && (
+                <span className="text-xs text-slate-600">Contact an admin to change</span>
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={handleSave}
+            disabled={saving || displayName === profile?.display_name}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 disabled:opacity-30 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
+          >
+            {saving ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : saved ? (
+              <Check size={14} />
+            ) : (
+              <Save size={14} />
+            )}
+            {saved ? 'Saved!' : 'Save Changes'}
+          </button>
+        </div>
+      </div>
+
+      {/* MCP Connection section */}
+      <div className="bg-surface-900 border border-surface-700/50 rounded-xl p-6 mb-6">
+        <h3 className="text-sm font-semibold text-slate-300 mb-2">MCP Connection</h3>
+        <p className="text-xs text-slate-500 mb-4">
+          Share this config with your team so they can connect Claude Desktop to your skills server.
+        </p>
+
+        <div className="relative">
+          <pre className="bg-surface-950 border border-surface-700/50 rounded-lg p-4 text-xs text-slate-300 font-mono overflow-x-auto">
+{JSON.stringify({
+  mcpServers: {
+    'team-skills': {
+      type: 'streamablehttp',
+      url: mcpUrl,
+    },
+  },
+}, null, 2)}
+          </pre>
+          <button
+            onClick={handleCopy}
+            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-800 hover:bg-surface-700 text-slate-400 hover:text-white text-xs transition-colors"
+          >
+            {copied ? <Check size={12} /> : <Copy size={12} />}
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
+
+        <div className="mt-4 space-y-2 text-xs text-slate-500">
+          <p><span className="text-slate-400 font-medium">1.</span> Open Claude Desktop → Settings → Developer → Edit Config</p>
+          <p><span className="text-slate-400 font-medium">2.</span> Paste the config above and save</p>
+          <p><span className="text-slate-400 font-medium">3.</span> Restart Claude Desktop</p>
+        </div>
+      </div>
+
+      {/* Danger zone */}
+      <div className="bg-surface-900 border border-accent-red/20 rounded-xl p-6">
+        <h3 className="text-sm font-semibold text-accent-red mb-2">Danger Zone</h3>
+        <p className="text-xs text-slate-500 mb-4">
+          These actions are irreversible. Proceed with caution.
+        </p>
+        <button
+          onClick={async () => {
+            if (!confirm('Are you sure you want to sign out?')) return;
+            const supabase = createClient();
+            await supabase.auth.signOut();
+            window.location.href = '/login';
+          }}
+          className="px-4 py-2 rounded-lg border border-accent-red/30 text-accent-red text-sm font-medium hover:bg-accent-red/10 transition-colors"
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+  );
+}
