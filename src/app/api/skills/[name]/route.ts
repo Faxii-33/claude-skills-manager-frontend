@@ -25,11 +25,17 @@ export async function PUT(req: NextRequest, { params }: { params: { name: string
 
   const body = await req.json();
 
+  // Auto-extract parameters from {placeholder} patterns in instructions
+  const placeholders = [...new Set(body.instructions.match(/\{(\w+)\}/g)?.map((m: string) => m.slice(1, -1)) || [])];
+  const parameters = placeholders.length > 0
+    ? placeholders.map((p: string) => `${p}: str`).join(', ')
+    : 'query: str';
+
   const { data, error } = await supabase
     .from('skills')
     .update({
       description: body.description,
-      parameters: body.parameters,
+      parameters,
       instructions: body.instructions,
       updated_at: new Date().toISOString(),
     })

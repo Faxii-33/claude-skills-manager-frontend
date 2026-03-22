@@ -218,7 +218,9 @@ function SkillCard({ skill, index }: { skill: Skill; index: number }) {
       <h3 className="text-sm font-semibold text-slate-200 mb-1 truncate">{skill.name}</h3>
       <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{skill.description}</p>
       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-surface-700/50">
-        <span className="text-[10px] text-slate-600 font-mono truncate">{skill.parameters}</span>
+        <span className="text-[10px] text-slate-600 font-mono truncate">
+          {skill.parameters?.split(',').map(p => p.split(':')[0].trim()).join(', ')}
+        </span>
       </div>
     </Link>
   );

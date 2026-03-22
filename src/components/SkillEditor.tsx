@@ -15,7 +15,7 @@ export default function SkillEditor({ initialSkill, isNew }: SkillEditorProps) {
   const router = useRouter();
   const [name, setName] = useState(initialSkill?.name || '');
   const [description, setDescription] = useState(initialSkill?.description || '');
-  const [parameters, setParameters] = useState(initialSkill?.parameters || 'query: str');
+  const parameters = initialSkill?.parameters || 'query: str';
   const [instructions, setInstructions] = useState(initialSkill?.instructions || '');
   const [showPreview, setShowPreview] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -43,7 +43,7 @@ export default function SkillEditor({ initialSkill, isNew }: SkillEditorProps) {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, description, parameters, instructions }),
+        body: JSON.stringify({ name, description, instructions }),
       });
 
       if (!res.ok) {
@@ -58,7 +58,7 @@ export default function SkillEditor({ initialSkill, isNew }: SkillEditorProps) {
     } finally {
       setSaving(false);
     }
-  }, [name, description, parameters, instructions, isNew, initialSkill, router]);
+  }, [name, description, instructions, isNew, initialSkill, router]);
 
   return (
     <div className="max-w-7xl">
@@ -138,19 +138,9 @@ export default function SkillEditor({ initialSkill, isNew }: SkillEditorProps) {
               />
             </div>
 
-            <div>
-              <label className="block text-xs text-slate-500 mb-1.5">Parameters</label>
-              <input
-                type="text"
-                value={parameters}
-                onChange={(e) => setParameters(e.target.value)}
-                placeholder="query: str, tone: str = 'professional'"
-                className="w-full px-3 py-2.5 bg-surface-850 border border-surface-700 rounded-lg text-white text-sm font-mono placeholder-slate-600 focus:outline-none focus:border-brand-500/50 transition-colors"
-              />
-              <p className="text-[10px] text-slate-600 mt-1.5">
-                Python-style params. Use {'{param}'} in instructions to inject values.
-              </p>
-            </div>
+            <p className="text-[10px] text-slate-500 leading-relaxed">
+              Tip: Use {'{placeholders}'} in your instructions (e.g. {'{topic}'}, {'{audience}'}) and they'll become input fields for the skill automatically.
+            </p>
           </div>
         </div>
 

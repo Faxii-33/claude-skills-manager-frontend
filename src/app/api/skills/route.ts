@@ -23,18 +23,24 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { name, description, parameters, instructions } = body;
+  const { name, description, instructions } = body;
 
   if (!name || !description || !instructions) {
     return NextResponse.json({ error: 'name, description, and instructions are required' }, { status: 400 });
   }
+
+  // Auto-extract parameters from {placeholder} patterns in instructions
+  const placeholders = [...new Set(instructions.match(/\{(\w+)\}/g)?.map((m: string) => m.slice(1, -1)) || [])];
+  const parameters = placeholders.length > 0
+    ? placeholders.map((p: string) => `${p}: str`).join(', ')
+    : 'query: str';
 
   const { data, error } = await supabase
     .from('skills')
     .upsert({
       name,
       description,
-      parameters: parameters || 'query: str',
+      parameters,
       instructions,
       created_by: user.id,
       updated_at: new Date().toISOString(),
