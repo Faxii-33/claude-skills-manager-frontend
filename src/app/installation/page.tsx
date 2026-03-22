@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check, Monitor, Terminal } from 'lucide-react';
+import { Copy, Check, Monitor } from 'lucide-react';
 
 export default function InstallationPage() {
   const [copiedDesktop, setCopiedDesktop] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
   const [copiedBrowser, setCopiedBrowser] = useState(false);
 
   const mcpUrl = process.env.NEXT_PUBLIC_MCP_SERVER_URL
@@ -20,8 +19,6 @@ export default function InstallationPage() {
       },
     },
   }, null, 2);
-
-  const codeCommand = `claude mcp add team-skills --transport streamable-http "${mcpUrl}"`;
 
   const handleCopy = (text: string, setter: (v: boolean) => void) => {
     navigator.clipboard.writeText(text);
@@ -69,42 +66,6 @@ export default function InstallationPage() {
               {copiedDesktop ? 'Copied!' : 'Copy'}
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Claude Code (CLI) */}
-      <div className="bg-surface-900 border border-surface-700/50 rounded-xl p-6 mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-9 h-9 rounded-lg bg-accent-green/20 flex items-center justify-center">
-            <Terminal size={18} className="text-accent-green" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-slate-200">Claude Code (CLI)</h3>
-            <p className="text-xs text-slate-500">Terminal-based Claude</p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-2 text-sm text-slate-400">
-            <p>Run the following command in your terminal:</p>
-          </div>
-
-          <div className="relative">
-            <pre className="bg-surface-950 border border-surface-700/50 rounded-lg p-4 text-xs text-slate-300 font-mono overflow-x-auto">
-{codeCommand}
-            </pre>
-            <button
-              onClick={() => handleCopy(codeCommand, setCopiedCode)}
-              className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-800 hover:bg-surface-700 text-slate-400 hover:text-white text-xs transition-colors"
-            >
-              {copiedCode ? <Check size={12} /> : <Copy size={12} />}
-              {copiedCode ? 'Copied!' : 'Copy'}
-            </button>
-          </div>
-
-          <p className="text-xs text-slate-500">
-            This registers the MCP server globally. To add it to a specific project only, run the command from within that project directory and add <span className="text-slate-400 font-mono">--scope project</span>.
-          </p>
         </div>
       </div>
 
