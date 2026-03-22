@@ -10,6 +10,7 @@ export default function TeamPage() {
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [changingRole, setChangingRole] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const fetchData = async () => {
     const supabase = createClient();
@@ -130,30 +131,33 @@ export default function TeamPage() {
                 {/* Actions */}
                 <div>
                   {isAdmin && member.id !== currentUser?.id && (
-                    <div className="relative group">
+                    <div className="relative">
                       <button
                         disabled={changingRole === member.id}
+                        onClick={() => setOpenMenu(openMenu === member.id ? null : member.id)}
                         className="p-1.5 rounded-md text-slate-500 hover:text-slate-300 hover:bg-surface-700 transition-colors disabled:opacity-50"
                         title="Change role"
                       >
                         <Pencil size={13} />
                       </button>
-                      <div className="absolute right-0 bottom-full mb-1 w-32 bg-surface-800 border border-surface-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-                        <button
-                          onClick={() => handleRoleChange(member.id, 'admin')}
-                          disabled={member.role === 'admin'}
-                          className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:bg-surface-700 disabled:text-slate-600 rounded-t-lg transition-colors"
-                        >
-                          Make Admin
-                        </button>
-                        <button
-                          onClick={() => handleRoleChange(member.id, 'user')}
-                          disabled={member.role === 'user'}
-                          className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:bg-surface-700 disabled:text-slate-600 rounded-b-lg transition-colors"
-                        >
-                          Make User
-                        </button>
-                      </div>
+                      {openMenu === member.id && (
+                        <div className="absolute right-0 bottom-full mb-1 w-32 bg-surface-800 border border-surface-600 rounded-lg shadow-xl z-10">
+                          <button
+                            onClick={() => { handleRoleChange(member.id, 'admin'); setOpenMenu(null); }}
+                            disabled={member.role === 'admin'}
+                            className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:bg-surface-700 disabled:text-slate-600 rounded-t-lg transition-colors"
+                          >
+                            Make Admin
+                          </button>
+                          <button
+                            onClick={() => { handleRoleChange(member.id, 'user'); setOpenMenu(null); }}
+                            disabled={member.role === 'user'}
+                            className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:bg-surface-700 disabled:text-slate-600 rounded-b-lg transition-colors"
+                          >
+                            Make User
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
