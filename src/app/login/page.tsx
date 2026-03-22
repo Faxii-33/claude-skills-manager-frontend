@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
-import { Zap, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Terminal, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -45,9 +45,9 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-10 animate-fade-in">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center mb-4 shadow-lg shadow-brand-500/20">
-            <Zap size={24} className="text-white" />
+            <Terminal size={24} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Skills Manager</h1>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Claude MD</h1>
           <p className="text-sm text-slate-500 mt-1">Sign in to your workspace</p>
         </div>
 

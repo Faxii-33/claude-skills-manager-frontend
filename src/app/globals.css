@@ -5,11 +5,16 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
+  --surface-950: #060a12;
   --surface-900: #0a0e17;
+  --surface-850: #0c1119;
   --surface-800: #0f1520;
   --surface-700: #151c2b;
   --surface-600: #1a2235;
   --surface-500: #212b40;
+  --brand-600: #0d9488;
+  --brand-500: #14b8a6;
+  --brand-400: #2dd4bf;
   --accent-blue: #3b82f6;
   --accent-cyan: #06b6d4;
   --accent-green: #10b981;
@@ -40,7 +45,7 @@ body {
 
 /* Markdown preview styling */
 .markdown-preview h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
-.markdown-preview h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--accent-cyan); }
+.markdown-preview h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--brand-400); }
 .markdown-preview h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
 .markdown-preview p { margin-bottom: 0.75rem; color: var(--text-secondary); line-height: 1.7; }
 .markdown-preview ul, .markdown-preview ol { margin-bottom: 0.75rem; padding-left: 1.5rem; color: var(--text-secondary); }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Pencil, Users, Settings, Plus, LogOut, Zap } from 'lucide-react';
+import { LayoutDashboard, Pencil, Users, Settings, Plus, LogOut, Terminal, HelpCircle, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
 
@@ -38,10 +38,10 @@ export default function Sidebar({ userRole, displayName }: SidebarProps) {
       <div className="p-5 pb-3">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
-            <Zap size={16} className="text-white" />
+            <Terminal size={16} className="text-white" />
           </div>
           <div>
-            <div className="text-sm font-semibold text-slate-100 tracking-tight">Skills Manager</div>
+            <div className="text-sm font-semibold text-slate-100 tracking-tight">Claude MD</div>
             <div className="text-[10px] text-slate-500 uppercase tracking-widest">Team Workspace</div>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default function Sidebar({ userRole, displayName }: SidebarProps) {
         })}
       </nav>
 
-      <div className="px-3 pb-2">
+      <div className="px-3 pb-3">
         <Link
           href="/editor/new"
           className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition-colors"
@@ -76,6 +76,23 @@ export default function Sidebar({ userRole, displayName }: SidebarProps) {
           <Plus size={16} />
           New Skill
         </Link>
+      </div>
+
+      <div className="px-3 pb-3 space-y-0.5">
+        <a
+          href="#"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 hover:bg-surface-800 transition-colors"
+        >
+          <HelpCircle size={16} strokeWidth={1.5} />
+          Support
+        </a>
+        <a
+          href="#"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 hover:bg-surface-800 transition-colors"
+        >
+          <FileText size={16} strokeWidth={1.5} />
+          Docs
+        </a>
       </div>
 
       <div className="p-3 border-t border-surface-700/50">

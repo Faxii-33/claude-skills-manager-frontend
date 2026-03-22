@@ -56,7 +56,7 @@ export default function TeamPage() {
     <div className="max-w-5xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">Workspace · Organization</p>
+          <p className="text-xs text-slate-500 tracking-widest mb-1">Workspace <span className="text-slate-600">/</span> Organization</p>
           <h1 className="text-2xl font-bold text-white tracking-tight">Team & Permissions</h1>
           <p className="text-sm text-slate-500 mt-1">
             Manage access levels and monitor activity across your workspace.

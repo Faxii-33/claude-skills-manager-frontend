@@ -72,8 +72,8 @@ export default function SkillEditor({ initialSkill, isNew }: SkillEditorProps) {
             <ArrowLeft size={18} />
           </button>
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-widest mb-0.5">
-              Editor · {isNew ? 'New Skill' : name}
+            <p className="text-xs text-slate-500 tracking-widest mb-0.5">
+              Editor <span className="text-slate-600">/</span> {isNew ? 'New Skill' : name}
             </p>
             <h1 className="text-xl font-bold text-white tracking-tight">
               {isNew ? 'Create New Skill' : 'Edit Skill'}

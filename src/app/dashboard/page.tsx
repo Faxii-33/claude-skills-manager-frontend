@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase-browser';
 import Link from 'next/link';
-import { Zap, TrendingUp, TrendingDown, Users, Clock, Pencil, Trash2, ExternalLink } from 'lucide-react';
+import { Terminal, TrendingUp, TrendingDown, Users, Clock, Pencil, Trash2, ExternalLink } from 'lucide-react';
 import type { Skill } from '@/lib/types';
 
 interface Stats {
@@ -57,7 +57,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">Workspace · Dashboard</p>
+          <p className="text-xs text-slate-500 tracking-widest mb-1">Workspace <span className="text-slate-600">/</span> Dashboard</p>
           <h1 className="text-2xl font-bold text-white tracking-tight">Skills Dashboard</h1>
         </div>
         <Link
@@ -211,7 +211,7 @@ function SkillCard({ skill, index }: { skill: Skill; index: number }) {
     >
       <div className="flex items-start justify-between mb-3">
         <div className="w-9 h-9 rounded-lg bg-surface-700 flex items-center justify-center">
-          <Zap size={16} className="text-brand-400" />
+          <Terminal size={16} className="text-brand-400" />
         </div>
         <ExternalLink size={14} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
       </div>

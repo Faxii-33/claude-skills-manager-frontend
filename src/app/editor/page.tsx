@@ -44,7 +44,7 @@ export default function EditorListPage() {
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">Workspace · Editor</p>
+          <p className="text-xs text-slate-500 tracking-widest mb-1">Workspace <span className="text-slate-600">/</span> Editor</p>
           <h1 className="text-2xl font-bold text-white tracking-tight">Skills Editor</h1>
         </div>
         <Link

@@ -110,7 +110,7 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-8">
-        <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">Workspace · Settings</p>
+        <p className="text-xs text-slate-500 tracking-widest mb-1">Workspace <span className="text-slate-600">/</span> Settings</p>
         <h1 className="text-2xl font-bold text-white tracking-tight">Settings</h1>
       </div>
 
