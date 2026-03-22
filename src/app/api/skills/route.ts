@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
   }
 
   // Auto-extract parameters from {placeholder} patterns in instructions
-  const placeholders = [...new Set(instructions.match(/\{(\w+)\}/g)?.map((m: string) => m.slice(1, -1)) || [])];
+  const matches: string[] = instructions.match(/\{(\w+)\}/g)?.map((m: string) => m.slice(1, -1)) || [];
+  const placeholders = [...new Set<string>(matches)];
   const parameters = placeholders.length > 0
     ? placeholders.map((p: string) => `${p}: str`).join(', ')
     : 'query: str';

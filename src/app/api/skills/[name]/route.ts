@@ -26,7 +26,8 @@ export async function PUT(req: NextRequest, { params }: { params: { name: string
   const body = await req.json();
 
   // Auto-extract parameters from {placeholder} patterns in instructions
-  const placeholders = [...new Set(body.instructions.match(/\{(\w+)\}/g)?.map((m: string) => m.slice(1, -1)) || [])];
+  const matches: string[] = body.instructions.match(/\{(\w+)\}/g)?.map((m: string) => m.slice(1, -1)) || [];
+  const placeholders = [...new Set<string>(matches)];
   const parameters = placeholders.length > 0
     ? placeholders.map((p: string) => `${p}: str`).join(', ')
     : 'query: str';
