@@ -67,8 +67,8 @@ export default function TeamPage() {
       <div className="flex gap-6">
         {/* Members table */}
         <div className="flex-1">
-          <div className="bg-surface-900 border border-surface-700/50 rounded-xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-surface-700/50">
+          <div className="bg-surface-900 border border-surface-700/50 rounded-xl overflow-visible">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-surface-700/50 rounded-t-xl">
               <h3 className="text-sm font-semibold text-slate-300">
                 Active Members <span className="text-slate-500 font-normal ml-1">{members.length} Total</span>
               </h3>
@@ -138,7 +138,7 @@ export default function TeamPage() {
                       >
                         <Pencil size={13} />
                       </button>
-                      <div className="absolute right-0 top-full mt-1 w-32 bg-surface-800 border border-surface-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                      <div className="absolute right-0 bottom-full mb-1 w-32 bg-surface-800 border border-surface-600 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                         <button
                           onClick={() => handleRoleChange(member.id, 'admin')}
                           disabled={member.role === 'admin'}
