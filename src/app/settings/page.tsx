@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase-browser';
-import { Save, Loader2, Copy, Check, UserPlus } from 'lucide-react';
+import { Save, Loader2, Check, UserPlus } from 'lucide-react';
 import type { Profile } from '@/lib/types';
 
 export default function SettingsPage() {
@@ -11,17 +11,12 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState<'user' | 'admin'>('user');
   const [addingUser, setAddingUser] = useState(false);
   const [addUserMsg, setAddUserMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  const mcpUrl = process.env.NEXT_PUBLIC_MCP_SERVER_URL
-    ? `${process.env.NEXT_PUBLIC_MCP_SERVER_URL}/mcp`
-    : 'https://claude-skills-manager-production.up.railway.app/mcp';
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -55,20 +50,6 @@ export default function SettingsPage() {
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
-  };
-
-  const handleCopy = () => {
-    const config = JSON.stringify({
-      mcpServers: {
-        'team-skills': {
-          type: 'streamablehttp',
-          url: mcpUrl,
-        },
-      },
-    }, null, 2);
-    navigator.clipboard.writeText(config);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleAddUser = async () => {
@@ -171,40 +152,6 @@ export default function SettingsPage() {
             )}
             {saved ? 'Saved!' : 'Save Changes'}
           </button>
-        </div>
-      </div>
-
-      {/* MCP Connection section */}
-      <div className="bg-surface-900 border border-surface-700/50 rounded-xl p-6 mb-6">
-        <h3 className="text-sm font-semibold text-slate-300 mb-2">MCP Connection</h3>
-        <p className="text-xs text-slate-500 mb-4">
-          Share this config with your team so they can connect Claude Desktop to your skills server.
-        </p>
-
-        <div className="relative">
-          <pre className="bg-surface-950 border border-surface-700/50 rounded-lg p-4 text-xs text-slate-300 font-mono overflow-x-auto">
-{JSON.stringify({
-  mcpServers: {
-    'team-skills': {
-      type: 'streamablehttp',
-      url: mcpUrl,
-    },
-  },
-}, null, 2)}
-          </pre>
-          <button
-            onClick={handleCopy}
-            className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-surface-800 hover:bg-surface-700 text-slate-400 hover:text-white text-xs transition-colors"
-          >
-            {copied ? <Check size={12} /> : <Copy size={12} />}
-            {copied ? 'Copied!' : 'Copy'}
-          </button>
-        </div>
-
-        <div className="mt-4 space-y-2 text-xs text-slate-500">
-          <p><span className="text-slate-400 font-medium">1.</span> Open Claude Desktop → Settings → Developer → Edit Config</p>
-          <p><span className="text-slate-400 font-medium">2.</span> Paste the config above and save</p>
-          <p><span className="text-slate-400 font-medium">3.</span> Restart Claude Desktop</p>
         </div>
       </div>
 

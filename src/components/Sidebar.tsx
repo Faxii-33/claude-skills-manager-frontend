@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Pencil, Users, Settings, Plus, LogOut, Terminal, HelpCircle, FileText } from 'lucide-react';
+import { LayoutDashboard, Pencil, Users, Settings, Plus, LogOut, Terminal, BookOpen } from 'lucide-react';
 import { createClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
 
@@ -11,6 +11,7 @@ const navItems = [
   { href: '/editor', label: 'Editor', icon: Pencil },
   { href: '/team', label: 'Team', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/installation', label: 'Installation Guide', icon: BookOpen },
 ];
 
 interface SidebarProps {
@@ -76,23 +77,6 @@ export default function Sidebar({ userRole, displayName }: SidebarProps) {
           <Plus size={16} />
           New Skill
         </Link>
-      </div>
-
-      <div className="px-3 pb-3 space-y-0.5">
-        <a
-          href="#"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 hover:bg-surface-800 transition-colors"
-        >
-          <HelpCircle size={16} strokeWidth={1.5} />
-          Support
-        </a>
-        <a
-          href="#"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-slate-300 hover:bg-surface-800 transition-colors"
-        >
-          <FileText size={16} strokeWidth={1.5} />
-          Docs
-        </a>
       </div>
 
       <div className="p-3 border-t border-surface-700/50">
