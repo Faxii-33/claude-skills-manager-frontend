@@ -41,10 +41,7 @@ export default function Sidebar({ userRole, displayName }: SidebarProps) {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
             <Terminal size={16} className="text-white" />
           </div>
-          <div>
-            <div className="text-sm font-semibold text-slate-100 tracking-tight">BSE Claude</div>
-            <div className="text-[10px] text-slate-500 uppercase tracking-widest">Skills Manager</div>
-          </div>
+          <div className="text-sm font-semibold text-slate-100 tracking-tight">Claude Skills Manager</div>
         </div>
       </div>
 
