@@ -41,7 +41,15 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: 'Valid userId and role required' }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  // Use service role client to bypass RLS
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!serviceRole || !supabaseUrl) {
+    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+  }
+
+  const adminClient = createClient(supabaseUrl, serviceRole);
+  const { data, error } = await adminClient
     .from('profiles')
     .update({ role })
     .eq('id', userId)
